@@ -46,10 +46,40 @@ dependencies:
   pdf: ^3.11.1
   firebase_storage: ^12.2.0
   skeletonizer: ^1.4.2
-
+  shared_preferences: ^2.2.3
+  fluttertoast: ^8.2.8
+  # advance_pdf_viewer: ^2.0.1
+  open_filex: ^4.5.0
+  # webview_flutter: ^4.8.0
+  # flutter_inappwebview: ^5.8.0
+  dio: ^5.7.0
+  # flutter_local_notifications: ^17.2.4
+  firebase_messaging: ^15.1.0
+  flutter_launcher_icons: ^0.14.1
+  url_launcher: ^6.3.1
+  mailer: ^6.4.1
+  # flutter_paypal_checkout: ^1.0.0
+  # pay: ^3.0.2
+  flutter_stripe: ^11.4.0
+  permission_handler: ^11.3.1
+  android_intent_plus: ^5.3.0
+ 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+ 
+
+
+flutter_icons:
+  android: "launcher_icon"
+  min_sdk_android: 24 # android min sdk min:16, default 21
+  adaptive_icon_background: "#ffffff" # You can use a color or image for the background
+  adaptive_icon_foreground: "assets/img/Group 1.png" # For adaptive icons on Android
+  ios: true
+  remove_alpha_ios: true
+  image_path: "assets/img/Group 1.png" 
+
+
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

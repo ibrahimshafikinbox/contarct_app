@@ -1,6 +1,7 @@
-import 'package:client_project/Core/navigation_helper.dart';
+import 'package:client_project/Core/Helper/navigation_helper.dart';
 import 'package:client_project/Feature/Create_account/View/create_acc_view.dart';
 import 'package:client_project/Feature/Login/widget/app_button.dart';
+import 'package:client_project/Feature/pages/understand_contaract._1.dart';
 import 'package:client_project/Feature/resources/colors/colors.dart';
 import 'package:client_project/Feature/resources/styles/app_sized_box.dart';
 import 'package:client_project/Feature/Login/View/login_view.dart';
@@ -49,7 +50,7 @@ class _SplashViewState extends State<SplashView> {
           AppSizedBox.sizedH20,
           appButton(
               function: () {
-                navigateTo(context, CreateAccountView());
+                navigateTo(context, ScreenSplash_1());
               },
               text: "Sign Up ",
               textColor: AppColors.black,

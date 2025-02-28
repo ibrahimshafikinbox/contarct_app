@@ -1,53 +1,3 @@
-// // ignore: depend_on_referenced_packages
-// import 'package:bloc/bloc.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
-
-// import 'package:client_project/Feature/Profile/cubit/profile_state.dart';
-
-// class UserProfileCubit extends Cubit<UserProfileState> {
-//   final FirebaseAuth _auth;
-//   final FirebaseFirestore _firestore;
-
-//   UserProfileCubit(this._auth, this._firestore) : super(UserProfileInitial());
-
-//   Future<void> fetchUserData() async {
-//     try {
-//       emit(UserProfileLoading());
-
-//       // Get the current user's UID
-//       User? user = _auth.currentUser;
-//       if (user != null) {
-//         String uid = user.uid;
-
-//         // Fetch the user document from Firestore
-//         DocumentSnapshot userDoc =
-//             await _firestore.collection('users').doc(uid).get();
-
-//         // Extract data from the document
-//         if (userDoc.exists) {
-//           final userData = {
-//             "name": userDoc['firstName'],
-//             "email": userDoc['email'],
-//             // "dateOfBirth": userDoc['dateOfBirth'],
-//             // "gender": userDoc['gender'],
-//             "address": userDoc['address'],
-//           };
-
-//           emit(UserProfileLoaded(userData));
-//           print(userData);
-//         } else {
-//           emit(UserProfileError("User data not found"));
-//         }
-//       } else {
-//         emit(UserProfileError("User not authenticated"));
-//       }
-//     } catch (e) {
-//       emit(UserProfileError("Error fetching user data: $e"));
-//       print(e);
-//     }
-//   }
-// }
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -63,42 +13,66 @@ class UserProfileCubit extends Cubit<UserProfileState> {
     try {
       emit(UserProfileLoading());
 
-      // Get the current user's UID
       User? user = _auth.currentUser;
       if (user != null) {
         String uid = user.uid;
 
-        // Fetch the user document from Firestore
         DocumentSnapshot userDoc =
             await _firestore.collection('users').doc(uid).get();
 
-        // Extract data and convert it to UserProfile model
-        //       if (userDoc.exists) {
-        //         UserProfile userProfile = UserProfile.fromFirestore(userDoc);
-
-        //         // Emit the loaded state with user profile data
-        // emit(UserProfileLoaded(userData)); // تمرير بيانات المستخدم هنا
-        //         print(userProfile);
         if (userDoc.exists) {
           final userData = {
             "firstName": userDoc['firstName'] ?? '',
             "email": userDoc['email'] ?? '',
             "address": userDoc['address'] ?? '',
-            // "phoneNumber": userDoc['phoneNumber'] ??
-            //     '',
-            // "dateOfBirth": userDoc['dateOfBirth'] ?? '',
-            // "gender": userDoc['gender'] ?? '',
+            "gender": userDoc['gender'] ?? "",
+            "phone_number": userDoc["phone_number"] ?? ""
           };
-          emit(UserProfileLoaded(userData)); // تمرير بيانات المستخدم هنا
+          emit(UserProfileLoaded(userData));
+          print(userDoc["phone_number"]);
         } else {
+          print("🚀🚀$uid");
+
+          print("user data not found ");
           emit(UserProfileError("User data not found"));
         }
       } else {
         emit(UserProfileError("User not authenticated"));
+        print("user not auth");
       }
     } catch (e) {
       emit(UserProfileError("Error fetching user data: $e"));
       print(e);
+    }
+  }
+
+  Future<void> updateUserProfile({
+    required String firstName,
+    required String phone,
+    required String address,
+    required String gender,
+  }) async {
+    try {
+      emit(EditUserProfileLoading());
+
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        String uid = user.uid;
+
+        await FirebaseFirestore.instance.collection('users').doc(uid).update({
+          'firstName': firstName,
+          "phone_number": phone,
+          // 'email': email,
+          'address': address,
+          "gender": gender
+        });
+
+        emit(EditUserProfileSuccess());
+      } else {
+        emit(UserProfileError("User not authenticated"));
+      }
+    } catch (e) {
+      emit(EditUserProfileError());
     }
   }
 }

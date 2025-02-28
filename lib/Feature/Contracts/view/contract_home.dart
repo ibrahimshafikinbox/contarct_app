@@ -1,29 +1,16 @@
-// import 'package:flutter/material.dart';
+// import 'dart:io';
 
-// class ContractHomeView extends StatelessWidget {
-//   const ContractHomeView({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return const Scaffold(
-
-//     );
-//   }
-// }
-
-import 'dart:io';
-
-import 'package:client_project/Core/navigation_helper.dart';
-import 'package:client_project/Feature/Contracts/view/review_contarct.dart';
+import 'package:client_project/Core/Helper/navigation_helper.dart';
+import 'package:client_project/Feature/Contracts/view/finished_order.dart';
+import 'package:client_project/Feature/Contracts/view/order_in_review.dart';
 import 'package:client_project/Feature/Contracts/view/start_new_order.dart';
-import 'package:client_project/Feature/Login/widget/app_button.dart';
-import 'package:client_project/Feature/Login/widget/default_form_filed.dart';
 import 'package:client_project/Feature/Profile/user_profile.dart';
-import 'package:client_project/Feature/resources/colors/colors.dart';
 import 'package:client_project/Feature/resources/styles/app_sized_box.dart';
 import 'package:client_project/Feature/resources/styles/app_text_style.dart';
 import 'package:client_project/Feature/settings/setting_view.dart';
 import 'package:flutter/material.dart';
+
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ContractHomeView extends StatefulWidget {
   @override
@@ -39,10 +26,84 @@ class _ContractHomeViewState extends State<ContractHomeView> {
     UserProfileView(),
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await checkEmailVerification(context);
+    });
+  }
+
   void onTapped(int index) {
     setState(() {
       _currentIndex = index;
     });
+  }
+
+  // Function to check email verification status
+  // Future<void> checkEmailVerification(BuildContext context) async {
+  //   User? user = FirebaseAuth.instance.currentUser;
+
+  //   if (user != null && !user.emailVerified) {
+  //     print(">>>>>>>Not verified ");
+  //     showEmailNotVerifiedDialog(context, user);
+  //   } else if (user != null && user.emailVerified) {
+  //     print(">>>>>>  verified ");
+  //   }
+  // }
+  Future<void> checkEmailVerification(BuildContext context) async {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      await user.reload();
+      user = FirebaseAuth.instance.currentUser;
+
+      if (user != null && !user.emailVerified) {
+        print(">>>>>>> Not verified ");
+        showEmailNotVerifiedDialog(context, user);
+      } else if (user != null && user.emailVerified) {
+        print(">>>>>> Verified ");
+      }
+    }
+  }
+
+  // Function to show a warning dialog
+  void showEmailNotVerifiedDialog(BuildContext context, User user) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Email Not Verified"),
+          content: Text(
+              "Your email address has not been verified. Please verify your email to continue."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("Later"),
+            ),
+            TextButton(
+              onPressed: () async {
+                await sendVerificationEmail(user);
+                Navigator.of(context).pop();
+              },
+              child: Text("Resend Verification Email"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Function to send a verification email
+  Future<void> sendVerificationEmail(User user) async {
+    try {
+      await user.sendEmailVerification();
+      print("Verification email sent.");
+    } catch (e) {
+      print("Failed to send verification email: $e");
+    }
   }
 
   @override
@@ -52,17 +113,17 @@ class _ContractHomeViewState extends State<ContractHomeView> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: onTapped,
-        items: [
+        items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home, color: Colors.green), // Home Icon
+            icon: Icon(Icons.home, color: Colors.green),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings), // Settings Icon
+            icon: Icon(Icons.settings),
             label: 'Settings',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person), // Profile Icon
+            icon: Icon(Icons.person),
             label: 'Profile',
           ),
         ],
@@ -83,7 +144,7 @@ class ContractHomePage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              AppSizedBox.sizedH30,
+              AppSizedBox.sizedH50,
               const Text(
                 "Contracts. \nMade Easy",
                 style: AppTextStyle.textStyleBoldBlack20,
@@ -101,7 +162,7 @@ class ContractHomePage extends StatelessWidget {
               AppSizedBox.sizedH30,
               TextButton(
                 onPressed: () {
-                  // navigateTo(context, ReviewContract());
+                  navigateTo(context, const OrderInReview());
                 },
                 child: const Text(
                   "Contracts in Review",
@@ -111,7 +172,7 @@ class ContractHomePage extends StatelessWidget {
               AppSizedBox.sizedH30,
               TextButton(
                 onPressed: () {
-                  navigateTo(context, ());
+                  navigateTo(context, FinishedOrderView());
                 },
                 child: const Text(
                   "Finished Orders",

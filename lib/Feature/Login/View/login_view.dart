@@ -1,5 +1,5 @@
-import 'package:client_project/Core/navigation_helper.dart';
-import 'package:client_project/Feature/Contracts/view/contract_home.dart';
+import 'package:client_project/Core/Helper/cache_helepr.dart';
+import 'package:client_project/Core/Helper/navigation_helper.dart';
 import 'package:client_project/Feature/Create_account/View/create_acc_view.dart';
 import 'package:client_project/Feature/Forgot_Password/view/forgot_view.dart';
 import 'package:client_project/Feature/Login/cubit/login_cubit.dart';
@@ -10,14 +10,19 @@ import 'package:client_project/Feature/Login/widget/default_form_filed.dart';
 import 'package:client_project/Feature/resources/colors/colors.dart';
 import 'package:client_project/Feature/resources/styles/app_sized_box.dart';
 import 'package:client_project/Feature/resources/styles/app_text_style.dart';
+import 'package:client_project/main.dart';
 
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginView extends StatefulWidget {
+  const LoginView({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _LoginViewState createState() => _LoginViewState();
 }
 
@@ -29,6 +34,12 @@ class _LoginViewState extends State<LoginView> {
   bool isRegisterMode = false;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  @override
+  void initState() {
+    super.initState();
+    String? uid = CachePrfHelper.getUid();
+    debugPrint("🚀UID: $uid");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,13 +50,18 @@ class _LoginViewState extends State<LoginView> {
         child: BlocConsumer<LoginCubit, LoginState>(
           listener: (context, state) {
             if (state is LoginSuccess) {
-              navigateTo(context, ContractHomeView());
+              Fluttertoast.showToast(
+                  msg: "correct user data ", backgroundColor: AppColors.green);
+              navigateTo(
+                  context,
+                  RoleBasedScreen(
+                    uid: CachePrfHelper.getUid(),
+                  ));
             } else if (state is LoginError) {
               // Show error message
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text(state.error),
-                backgroundColor: Colors.red,
-              ));
+              Fluttertoast.showToast(
+                  msg: "please check you login data ",
+                  backgroundColor: AppColors.red);
             }
           },
           builder: (context, state) {
@@ -64,30 +80,22 @@ class _LoginViewState extends State<LoginView> {
                           Image.asset("assets/img/Group 1.png"),
                         ],
                       ),
+                      AppSizedBox.sizedH10,
+                      const Center(
+                          child: Text(
+                        "sign_in",
+                        style: TextStyle(
+                            color: AppColors.black,
+                            fontSize: 25,
+                            fontWeight: FontWeight.w600),
+                      )),
                       AppSizedBox.sizedH20,
-                      if (isRegisterMode) Text('Name'),
-                      if (isRegisterMode) AppSizedBox.sizedH10,
-                      if (isRegisterMode)
-                        DefaultFormField(
-                          controller: nameController,
-                          type: TextInputType.name,
-                          hint: 'Your Name',
-                          onValidate: (String? value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your name';
-                            }
-                            return null;
-                          },
-                          label: 'Name',
-                          maxlines: 1,
-                        ),
-                      AppSizedBox.sizedH20,
-                      Text('Email'),
+                      const Text('Email'),
                       AppSizedBox.sizedH10,
                       DefaultFormField(
                         controller: emailController,
                         type: TextInputType.emailAddress,
-                        hint: 'user@gmail.com',
+                        hint: '',
                         onValidate: (String? value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter your email';
@@ -97,16 +105,17 @@ class _LoginViewState extends State<LoginView> {
                           }
                           return null;
                         },
-                        label: 'Email',
+                        label: '',
                         maxlines: 1,
                       ),
                       AppSizedBox.sizedH20,
-                      Text('Password'),
+                      const Text('Password'),
+                      AppSizedBox.sizedH10,
                       passwordFormField(
                         controller: passwordController,
                         type: TextInputType.visiblePassword,
-                        label: "password",
-                        hint: '********************',
+                        label: "",
+                        hint: "",
                         suffix: LoginCubit.get(context).suffix,
                         isPassword: LoginCubit.get(context).isPassword,
                         prefix: Icons.lock_outline,
@@ -115,7 +124,7 @@ class _LoginViewState extends State<LoginView> {
                         },
                         onValidate: (String? value) {
                           if (value == null || value.isEmpty) {
-                            return '  enter Your Password';
+                            return ' enter Your Password';
                           }
                           return null;
                         },
@@ -124,9 +133,9 @@ class _LoginViewState extends State<LoginView> {
                       Center(
                         child: TextButton(
                           onPressed: () {
-                            navigateTo(context, ForgotPassView());
+                            navigateTo(context, const ForgotPassView());
                           },
-                          child: Text(
+                          child: const Text(
                             "Forgot your password? ",
                             style: AppTextStyle.textStyleMediumGray18,
                           ),
@@ -135,7 +144,8 @@ class _LoginViewState extends State<LoginView> {
                       Center(
                         child: TextButton(
                           onPressed: () {
-                            navigateAndFinish(context, CreateAccountView());
+                            navigateAndFinish(
+                                context, const CreateAccountView());
                           },
                           child: Text(
                             'Create a new account',
@@ -161,7 +171,7 @@ class _LoginViewState extends State<LoginView> {
                           textColor: AppColors.white,
                           bottonColor: AppColors.green,
                         ),
-                        fallback: (context) => Center(
+                        fallback: (context) => const Center(
                           child: CircularProgressIndicator(),
                         ),
                       ),

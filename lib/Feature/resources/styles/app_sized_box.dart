@@ -48,6 +48,9 @@ class AppSizedBox {
   static const Widget sizedW5 = SizedBox(
     width: 5,
   );
+  static const Widget sizedW150 = SizedBox(
+    width: 140,
+  );
   static const Widget sizedW10 = SizedBox(
     width: 10,
   );

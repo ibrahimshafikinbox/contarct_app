@@ -54,14 +54,14 @@ class DefaultFormField extends StatelessWidget {
           icon: Icon(suffix),
         ),
         border: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(20)),
+          borderRadius: BorderRadius.all(Radius.circular(25)),
         ),
         enabledBorder: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(20)),
+          borderRadius: BorderRadius.all(Radius.circular(25)),
           borderSide: BorderSide(color: Colors.black),
         ),
         focusedBorder: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(20)),
+          borderRadius: BorderRadius.all(Radius.circular(25)),
         ),
       ),
     );

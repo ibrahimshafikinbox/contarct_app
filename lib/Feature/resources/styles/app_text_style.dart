@@ -203,7 +203,7 @@ class AppTextStyle {
   );
   static const TextStyle textStyleBoldBlack20 = TextStyle(
     color: AppColors.textBlack,
-    fontSize: 26,
+    fontSize: 24,
     fontWeight: FontWeight.w700,
   );
 
