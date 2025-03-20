@@ -25,8 +25,7 @@ void main() async {
   String? uid = CachePrfHelper.getUid();
   print("🚀 App open and that is UID: $uid");
   Stripe.publishableKey = AppConstants.stipe_publishable;
-  // "pk_test_51QrfjURburLuZYWY2cjANIyWsWS9esUkBZPkgr9PZDABUce25Pb60rhmC8Si9u2EqGxhrfYPaq6kDJ2NI6t3ecsh00BaNRUqOj";
-
+ 
   Stripe.instance.applySettings();
 
   MessagingHelper().initialize();
